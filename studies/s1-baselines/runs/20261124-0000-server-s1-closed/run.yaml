@@ -1,0 +1,16 @@
+# Backfilled from the LOG and committed results (see source). Unknown values are null.
+id: 20261124-0000-server-s1-closed
+study: s1-baselines
+author: Dewmina Wijekoon
+host: server
+started: null
+finished: null
+exit_code: null
+commit: fffac12
+dirty: null
+command: "experiments/run_s1.sh closed"
+seed: null
+backfilled: true
+source: "studies/s1-baselines/LOG.md, entry '2026-11-24 — S1 launched (server, tmux afcp_s1, commit fffac12)'; results in results/<tag>/results.csv"
+outputs_dir: "~/afcp_outputs/s1"
+notes: "Closed-form tiers T0/T1r/T2r/T3r x 12 selectors x 6 budgets on run01_paper, clean_s42, clean_s43, clean_s44 (288 rows each). Finished on 2026-11-24 (LOG entry 17:40). Committed copy: studies/s1-baselines/results/."

@@ -11,8 +11,11 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PY="${PY:-$HERE/../cifar10/.venv/bin/python}"
-export AFCP_DATA="${AFCP_DATA:-$HERE/../cifar10/data}"
+# On the server, point these at the ASF-S cifar10-repro venv and data:
+#   export PY=~/NeuroPulseCo/ASF-S/studies/cifar10-repro/.venv/bin/python
+#   export AFCP_DATA=~/NeuroPulseCo/ASF-S/studies/cifar10-repro/data
+PY="${PY:-$HERE/.venv/bin/python}"
+export AFCP_DATA="${AFCP_DATA:-$HERE/data}"
 export AFCP_OUTPUTS="${AFCP_OUTPUTS:-$HOME/afcp_outputs}"
 DENSE="${ASFS_OUTPUTS:-$HOME/asfs_outputs}"
 

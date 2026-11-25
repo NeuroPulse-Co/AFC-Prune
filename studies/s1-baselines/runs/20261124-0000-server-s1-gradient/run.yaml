@@ -1,0 +1,16 @@
+# Backfilled from the LOG and committed results (see source). Unknown values are null.
+id: 20261124-0000-server-s1-gradient
+study: s1-baselines
+author: Dewmina Wijekoon
+host: server
+started: null
+finished: null
+exit_code: null
+commit: fffac12
+dirty: null
+command: "experiments/run_s1.sh gradient"
+seed: 42
+backfilled: true
+source: "studies/s1-baselines/LOG.md, entry '2026-11-24 — S1 launched (server, tmux afcp_s1, commit fffac12)'; first 3 gradient rows in results/run01_paper/results.csv"
+outputs_dir: "~/afcp_outputs/s1"
+notes: "Gradient tiers T1g/T1fc/T4 on run01_paper then clean_s42 (about 10 h each). Running at the 17:40 LOG entry; the committed snapshot holds only its first 3 rows. The GPU server lost power around 2026-11-25, so the run was interrupted at an unknown point. run_s1.sh skips finished rows, so it can be resumed."

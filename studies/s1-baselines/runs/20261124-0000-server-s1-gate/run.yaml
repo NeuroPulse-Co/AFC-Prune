@@ -1,0 +1,16 @@
+# Backfilled from the LOG and committed results (see source). Unknown values are null.
+id: 20261124-0000-server-s1-gate
+study: s1-baselines
+author: Dewmina Wijekoon
+host: server
+started: null
+finished: null
+exit_code: null
+commit: fffac12
+dirty: null
+command: "experiments/run_s1.sh gate"
+seed: 42
+backfilled: true
+source: "studies/s1-baselines/LOG.md, entry '2026-11-24 — S1 launched (server, tmux afcp_s1, commit fffac12)'; results/run01_paper/gate.json"
+outputs_dir: "~/afcp_outputs/s1/run01_paper"
+notes: "Reproduction gate: pgi_aligned at (19,16), tier T1fc, fine-tuning seed 42 -> -10.47 against -10.50 +/- 0.5, passed."

@@ -1,0 +1,57 @@
+id: s1-baselines
+title: "Under one fair protocol, does corrected PGI select better filters than simple scores?"
+workstream: W2
+status: running
+owner: [Dewmina Wijekoon]
+started: 2026-11-24
+summary: >-
+  We compare twelve ways of choosing which convolutional filters to keep, including our corrected
+  Principal Gradient Importance (PGI), at six pruning budgets and several recovery levels, on three
+  separately trained models. So far, PGI beats random choice but loses to simple scores such as
+  Taylor importance and weight magnitude.
+question: >-
+  When every selector gets the same budget, the same per-layer allocation rule and the same recovery
+  step, does corrected PGI keep more validation accuracy on Conv2Net with CIFAR-10 than simple
+  filter scores (L1 and L2 norm, Taylor, batch-normalisation scale, FPGM, HRank, mean activation)
+  and random choice?
+hypothesis: >-
+  If PGI captures how filters shape the output layer's functional connectivity, it should beat the
+  simple scores, most clearly when only the output layer is allowed to recover.
+success_criterion: >-
+  Over three dense models trained with different seeds, corrected PGI's mean validation accuracy
+  change is at least as good as the best simple selector at most budgets, judged on paired
+  per-seed differences, with the closed-form ridge head (tier T1r) as the headline recovery tier.
+criterion: post_hoc
+code: [afcprune, experiments/s1_baselines.py, experiments/run_s1.sh]
+paper_targets: {conv2net_75p8_dacc: -3.78}
+notes: >-
+  The closed-form tiers (T0, T1r, T2r, T3r) finished on all four checkpoints on 2026-11-24. The
+  gradient tiers (T1g, T1fc, T4) had started on run01_paper when the GPU server lost power around
+  2026-11-25; how far they got is unknown until the server is back. The runner skips finished
+  rows, so the phase can be resumed.
+key_results:            # interim, closed-form tiers only
+  - label: "Taylor importance, 75.8% of parameters removed, closed-form ridge head (T1r)"
+    value: -8.35
+    unit: "accuracy change (points)"
+    split: val
+    n_seeds: 3
+    std: 1.40
+    compare: {label: "paper (Table 5)", value: -3.78}
+  - label: "Corrected PGI, same setting"
+    value: -10.65
+    unit: "accuracy change (points)"
+    split: val
+    n_seeds: 3
+    std: 1.02
+  - label: "Random selection (3 draws per seed), same setting"
+    value: -11.39
+    unit: "accuracy change (points)"
+    split: val
+    n_seeds: 3
+    std: 1.37
+  - label: "Reproduction gate: corrected PGI at (19, 16) kept, FC fine-tuning (T1fc), paper protocol"
+    value: -10.47
+    unit: "accuracy change (points)"
+    split: test
+    n_seeds: 1
+    compare: {label: "cifar10-repro step 8, 3-seed mean", value: -10.50}

@@ -1,0 +1,49 @@
+id: s0-skeleton
+title: "Can we rebuild the ASF-S pipeline as a tested package that matches the original code exactly?"
+workstream: W2
+status: closed-positive
+owner: [Dewmina Wijekoon]
+started: 2026-11-24
+closed: 2026-11-24
+summary: >-
+  We rebuilt the Artificial Structure Function Search (ASF-S) pipeline as one self-contained, tested
+  Python package, with a guard that logs every read of the test set. Its outputs match our earlier
+  CIFAR-10 code exactly, so later comparisons start from a trusted base.
+question: >-
+  Can the whole pipeline, from Artificial Functional Connectivity (AFC) and its first principal
+  gradient (PG1) to filter scoring, pruning and recovery, be ported into one package that reproduces
+  the earlier, separately validated CIFAR-10 code to numerical precision?
+hypothesis: >-
+  A careful port with golden regression tests on fixed synthetic inputs will reproduce every
+  intermediate output of the original code, because the mathematics is unchanged and only the
+  structure of the code moves.
+success_criterion: >-
+  Every golden test passes: PG1, eigenvalues, contrast, PCA, Principal Gradient Importance (PGI) in
+  both modes and on both models, and pruning surgery match the original code to within 1e-10
+  (1e-5 for logits). Conv2Net parameter and FLOP counts equal the paper's Table 4 exactly.
+criterion: post_hoc
+code: [afcprune, tests]
+verdict: >-
+  The port is exact. All 73 tests passed on the laptop and on the GPU server, the golden outputs
+  match the original code to within 1e-10, and the Table 4 counts match exactly. The stage also
+  settled two definitions for later stages: our earlier −10.50 result retrains the FC layer while
+  batch-normalisation statistics still adapt, so it is not strictly "head-only"; and Conv2Net's
+  parameters are 89% in the FC layer, so the per-layer allocation of kept filters drives the
+  compression numbers.
+key_results:
+  - label: "Tests passing (unit + golden regression), laptop and GPU server"
+    value: 73
+    unit: "tests (of 73)"
+    split: none
+    n_seeds: 1
+  - label: "Largest difference from the original code on golden outputs (logits excluded)"
+    value: 1.0e-10
+    unit: "absolute difference (upper bound)"
+    split: none
+    n_seeds: 1
+  - label: "Conv2Net parameters"
+    value: 183434
+    unit: "parameters"
+    split: none
+    n_seeds: 1
+    compare: {label: "paper (Table 4)", value: 183000}

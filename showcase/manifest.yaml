@@ -1,0 +1,27 @@
+repo: AFC-Prune
+generated_by: record.py 1.0.0
+workstreams:
+- W2
+studies:
+- id: s0-skeleton
+  title: Can we rebuild the ASF-S pipeline as a tested package that matches the original code exactly?
+  workstream: W2
+  status: closed-positive
+  summary: We rebuilt the Artificial Structure Function Search (ASF-S) pipeline as one self-contained,
+    tested Python package, with a guard that logs every read of the test set. Its outputs match our earlier
+    CIFAR-10 code exactly, so later comparisons start from a trusted base.
+  page: studies/s0-skeleton.md
+- id: s1-baselines
+  title: Under one fair protocol, does corrected PGI select better filters than simple scores?
+  workstream: W2
+  status: running
+  summary: We compare twelve ways of choosing which convolutional filters to keep, including our corrected
+    Principal Gradient Importance (PGI), at six pruning budgets and several recovery levels, on three
+    separately trained models. So far, PGI beats random choice but loses to simple scores such as Taylor
+    importance and weight magnitude.
+  page: studies/s1-baselines.md
+posts:
+- file: posts/2026-11-25-s0-skeleton.md
+  title: Can we rebuild the ASF-S pipeline as a tested package that matches the original code exactly?
+  date: '2026-11-25'
+  draft: true

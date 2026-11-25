@@ -5,10 +5,13 @@ Runs cifar10/asfs/{afc,pg,contrast,pgi,prune} on fixed synthetic inputs (a seede
 non-trivial BN statistics, seeded "activations") and saves everything to golden.npz. tests/test_golden.py
 compares afcprune against this file, so the comparison keeps working after afcprune leaves this repo.
 
-Regenerate (only when the reference code changes, from the repo root, which must contain cifar10/):
-    afcprune/.venv/bin/python afcprune/tests/golden/make_golden.py
+Regenerate only when the reference code changes. The reference is the ASF-S repo's
+studies/cifar10-repro folder; by default it is looked for in a sibling checkout of ASF-S,
+or set ASFS_CIFAR10 to its path:
+    ASFS_CIFAR10=../ASF-S/studies/cifar10-repro .venv/bin/python tests/golden/make_golden.py
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -16,10 +19,10 @@ import numpy as np
 import torch
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[2]
-sys.path.insert(0, str(REPO / "cifar10"))
+REF = Path(os.environ.get("ASFS_CIFAR10", HERE.parents[2] / "ASF-S" / "studies" / "cifar10-repro"))
+sys.path.insert(0, str(REF))
 
-import models                                  # noqa: E402  (cifar10/models.py)
+import models                                  # noqa: E402  (ASF-S studies/cifar10-repro/models.py)
 from asfs import afc, contrast, pg, pgi, prune  # noqa: E402
 
 SIGMA, EPS, ALPHA, K = 0.8, 1e-6, 0.5, 4

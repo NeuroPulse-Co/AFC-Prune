@@ -1,22 +1,23 @@
-# afcprune
+# AFC-Prune
 
-AFC-preserving structured pruning. It continues the ASF-S reproductions (`cifar10/`, `cifar100/`, `mnist/`):
-it keeps the seed paper's idea (preserve the output layer's Artificial Functional Connectivity so the pruned
-layers need no retraining) and tests it under a protocol built to survive review. The package is
-self-contained (it imports nothing from the rest of this repo) and will move to its own repo.
+AFC-preserving structured pruning. This repository continues our reproductions of Artificial Structure Function Search (ASF-S) in the [ASF-S repository](https://github.com/NeuroPulse-Co/ASF-S). It keeps the seed paper's idea, which is to preserve the output layer's Artificial Functional Connectivity (AFC) so that the pruned layers need no retraining, and tests it under a protocol built to survive review.
 
-Plan: `docs/` + LOG.md. Positioning against prior work: [`docs/related_work.md`](docs/related_work.md).
+Part of **NeuroPulse**, a final-year research project on structure-function-aware pruning for continual learning. Project site: https://neuropulse-co.github.io · **Workstream:** W2, AFC pruning protocol.
+
+Positioning against prior work: [`docs/related_work.md`](docs/related_work.md). The project-wide plan, including the go/no-go decision for this workstream, is in [NeuroPulse-Co/.github](https://github.com/NeuroPulse-Co/.github/blob/main/standards/PLAN.md).
 
 ## Status
 
-| Stage | What | Status |
-|---|---|---|
-| S0 | Skeleton, ports, protocol guard, golden regression | **done**, 73 tests |
-| S1 | Dense models (3 clean seeds + run01 + weak) and the selector × tier × budget baseline factorial | next |
-| S2 | Does AFC carry information beyond logit matching? (go / no-go) | |
-| S3 | Closed-form head and recovery tiers | |
-| S4 | Multi-layer AFC, FC-redundancy, iterative, allocation, class-conditional | |
-| S5 | Frozen configs, one test-set look, Conv6Net, paper scorecard | |
+| Stage | What | Status | Records |
+|---|---|---|---|
+| S0 | Skeleton, ports, protocol guard, golden regression | **done** (closed-positive), 75 tests | [`studies/s0-skeleton`](studies/s0-skeleton/) |
+| S1 | Dense models (3 clean seeds + run01) and the selector × tier × budget baseline factorial | **running**: closed-form tiers done on all checkpoints; gradient tiers interrupted by a server outage on 2026-11-25 | [`studies/s1-baselines`](studies/s1-baselines/) |
+| S2 | Does AFC carry information beyond logit matching? (go / no-go) | planned | |
+| S3 | Closed-form head and recovery tiers | planned | |
+| S4 | Multi-layer AFC, FC-redundancy, iterative, allocation, class-conditional | planned | |
+| S5 | Frozen configs, one test-set look, Conv6Net, paper scorecard | planned | |
+
+So far, corrected Principal Gradient Importance (PGI) beats random choice but loses to simple scores. At 75.8% of parameters removed with a closed-form output head, Taylor importance loses 8.35 ± 1.40 points and PGI 10.65 ± 1.02 (validation, 3 seeds), against the paper's 3.78.
 
 ## Layout
 
@@ -47,10 +48,20 @@ between T1 and T2.
 ## Setup and tests
 
 ```bash
-VENV=$PWD/afcprune/.venv bash cifar10/setup.sh --cuda cpu   # laptop; on the server let it detect CUDA
-cd afcprune && .venv/bin/python -m pytest -q
+python -m venv .venv && .venv/bin/pip install torch torchvision -e '.[test]'   # pick the torch wheel for your driver
+.venv/bin/python -m pytest -q
 ```
 
-`tests/golden/golden.npz` freezes the original `cifar10/asfs` outputs on synthetic inputs. `test_golden.py`
-checks that afcprune reproduces them exactly. Regenerate it only from this repo, with
-`tests/golden/make_golden.py`.
+`tests/golden/golden.npz` freezes the outputs of the original ASF-S CIFAR-10 code (`studies/cifar10-repro/asfs` in the ASF-S repository) on synthetic inputs. `test_golden.py` checks that afcprune reproduces them exactly. Regenerate it only when that reference changes, with `tests/golden/make_golden.py` (see its docstring).
+
+## Running experiments
+
+`experiments/run_s1.sh` reads dense checkpoints from `$ASFS_OUTPUTS` and writes to `$AFCP_OUTPUTS`. On the server, point `PY` and `AFCP_DATA` at the ASF-S `studies/cifar10-repro` venv and data. Wrap new runs in the record tool so that the code version, seed and environment are captured:
+
+```bash
+uv run tools/record.py run s1-baselines --tag gradient-resume -- experiments/run_s1.sh gradient
+```
+
+## How we keep records
+
+Each stage is a study in `studies/<id>/`, with a `study.yaml`, a `LOG.md`, a `FINDINGS.md` once it closes, and one `runs/<run-id>/run.yaml` per run. We follow the [NeuroPulse record standard](https://github.com/NeuroPulse-Co/.github/blob/main/standards/RECORDS.md). `uv run tools/record.py check` validates every record and also runs in CI. The package code (`afcprune/`), the tests and `experiments/` are shared by all stages, so they stay at the repository root.

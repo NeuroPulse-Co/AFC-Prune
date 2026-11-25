@@ -1,0 +1,16 @@
+# Backfilled from the LOG and committed results (see source). Unknown values are null.
+id: 20261124-0000-server-dense-s44
+study: s1-baselines
+author: Dewmina Wijekoon
+host: server
+started: null
+finished: null
+exit_code: null
+commit: 12e17ef
+dirty: null
+command: "cifar10/steps/step1_train.py --protocol clean --seed 44 --run-id afcp_dense_s44"
+seed: 44
+backfilled: true
+source: "studies/s1-baselines/LOG.md, entry '2026-11-24 — S1 prep'; dense val accuracy from results/clean_s44/results.csv"
+outputs_dir: "~/asfs_outputs/afcp_dense_s44/conv2net_clean/step1_train"
+notes: "Dense Conv2Net for S1, clean protocol (45k train / 5k val), run with the ASF-S cifar10 step 1 code in tmux afcp_dense. Best val accuracy 74.78%. Start time unknown (0000 in the id). Command reconstructed from the LOG."
