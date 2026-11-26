@@ -78,4 +78,4 @@ Two definitions came out of this stage, and they shape everything after it:
 1. **Our earlier −10.50 result is not strictly "head-only".** It retrained the fully connected (FC) layer while the batch-normalisation statistics kept adapting. The recovery tiers are defined so that this setting has its own name (T1fc).
 2. **Most of Conv2Net's parameters are in the FC layer** (89%, or 163,850 of 183,434). Each kept filter in the second convolution carries 2,560 FC parameters, so how many filters each layer keeps matters more than which filters are kept. We therefore report kept counts with every result.
 
-The next study, [S1](../s1-baselines/), uses this package to compare PGI with simple filter scores.
+The next study, [S1](https://github.com/NeuroPulse-Co/AFC-Prune/tree/main/studies/s1-baselines), uses this package to compare PGI with simple filter scores.
