@@ -55,3 +55,87 @@ key_results:            # interim, closed-form tiers only
     split: test
     n_seeds: 1
     compare: {label: "cifar10-repro step 8, 3-seed mean", value: -10.50}
+evidence:
+  - type: diagram
+    source: diagrams/method.excalidraw.svg
+    title: One fair comparison of filter-selection methods
+    caption: >-
+      Each of three separately trained Conv2Net networks is pruned by our corrected Principal
+      Gradient Importance (PGI, in blue) and by eleven comparison methods, including filter pruning
+      via geometric median (FPGM) and feature-map rank (HRank). Every method gets the same budgets,
+      the same rule for splitting the budget between the two layers, and the same recovery levels,
+      and every pruning choice is made on validation images. The amber level, gradient
+      fine-tuning, is unfinished because the GPU server lost power, so the results so far come from
+      the four recovery levels that need no gradient training.
+  - type: chart
+    source: [results/clean_s42/results.csv, results/clean_s43/results.csv, results/clean_s44/results.csv]
+    filter: {budget: 75.8, tier: T1r}
+    x: selector
+    y: d_acc
+    x_label: How filters were chosen
+    y_label: Change in validation accuracy after removing 75.8% of parameters (points)
+    split: val
+    labels: &selectors
+      pgi_aligned: PGI, corrected
+      pgi_literal: PGI, authors' formula
+      taylor: Taylor importance
+      bn_gamma: Batch-norm scale
+      l1: Smallest weights (L1)
+      l2: Smallest weights (L2)
+      fpgm: Geometric median (FPGM)
+      hrank: Feature-map rank (HRank)
+      act_mean: Mean activation
+      random_s0: Random filters
+      random_s1: Random filters
+      random_s2: Random filters
+    reference: {label: "Paper", value: -3.78}
+    title: At the paper's pruning level, corrected PGI loses to simple scores
+    caption: >-
+      Each dot is one of three separately trained networks; random filters have three draws per
+      network. Only the final layer is refitted after pruning. Taylor importance, batch-norm scale
+      and the smallest weights cluster around −8.4 to −8.8, corrected PGI averages −10.65, and
+      random choice −11.39. Nothing comes near the paper's −3.78.
+  - type: chart
+    source: [results/clean_s42/results.csv, results/clean_s43/results.csv, results/clean_s44/results.csv]
+    filter: {budget: [50.0, 70.0, 75.8, 85.0, 90.0], tier: T1r, selector: [pgi_aligned, taylor, random_s0, random_s1, random_s2]}
+    x: budget
+    series: selector
+    y: d_acc
+    x_label: Share of parameters removed
+    y_label: Change in validation accuracy (points)
+    split: val
+    labels:
+      "50.0": 50% removed
+      "70.0": 70% removed
+      "75.8": 75.8% removed
+      "85.0": 85% removed
+      "90.0": 90% removed
+      pgi_aligned: PGI, corrected
+      taylor: Taylor importance
+      random_s0: Random filters
+      random_s1: Random filters
+      random_s2: Random filters
+    title: The ranking holds at every pruning level
+    caption: >-
+      The same comparison at five pruning levels. At every level, corrected PGI sits between
+      Taylor importance and random choice: better than chance, worse than a simple score. The gap
+      to random is widest at 90%, where random choice loses about five points more than PGI.
+  - type: table
+    source: [results/clean_s42/results.csv, results/clean_s43/results.csv, results/clean_s44/results.csv]
+    filter: {budget: 75.8, selector: [pgi_aligned, taylor, l1]}
+    columns: {tag: Network, selector: Selection, tier: Recovery, val_acc: "Validation accuracy (%)", d_acc: "Change (points)"}
+    labels:
+      pgi_aligned: PGI, corrected
+      taylor: Taylor importance
+      l1: Smallest weights (L1)
+      T0: Nothing refitted
+      T1r: Final layer refitted
+      T2r: + batch-norm statistics
+      T3r: + next layer refitted
+    split: val
+    title: Cheap recovery steps barely help
+    caption: >-
+      Each pruned network at 75.8%, with four levels of recovery that need no gradient training.
+      With nothing refitted, pruning costs 44 to 57 points. Refitting the final layer brings that
+      back to between −7.4 and −11.8. Re-estimating batch-norm statistics and refitting the next
+      layer then change the result by less than one point, and mostly make it slightly worse.
